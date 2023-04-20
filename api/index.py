@@ -19,7 +19,7 @@ def update_channel_stats():
 
     # 빈 리스트 생성
     channel_data = []
-    print("인증성공")
+    # print("인증성공")
     # 채널 ID 리스트를 순회하며 API 호출하여 데이터 추출
     for channel_id in channel_id_list:
         try:
@@ -47,11 +47,11 @@ def update_channel_stats():
 
         except:
             continue
-    print("유튜브api성공")
+    # print("유튜브api성공")
     # postgresql에 연결
     DATABASE_URL = os.environ.get('DATABASE_URL')
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    print("DB연결성공")
+    # print("DB연결성공")
     # 데이터를 PostgreSQL에 삽입
     cur = conn.cursor()
     for channel in channel_data:
@@ -62,7 +62,7 @@ def update_channel_stats():
     conn.commit()
     cur.close()
     conn.close()
-    print("끝")
+    # print("끝")
 # def handler(event, context):
 #     update_channel_stats()
 #
