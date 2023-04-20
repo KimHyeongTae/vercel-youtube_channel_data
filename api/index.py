@@ -2,10 +2,13 @@ import json
 import os
 import psycopg2
 from googleapiclient.discovery import build
+from http.server import BaseHTTPRequestHandler
+from os.path import join
+
 
 def update_channel_stats():
     # 채널 ID 리스트 불러오기
-    with open('data/channels_renewal_202304031340.csv', 'r') as f:
+    with open('../data/channels_renewal_202304031340.csv', 'r') as f:
         channel_id_list = f.read().splitlines()
 
     # youtube API client 생성
@@ -16,7 +19,7 @@ def update_channel_stats():
 
     # 빈 리스트 생성
     channel_data = []
-
+    print("인증성공")
     # 채널 ID 리스트를 순회하며 API 호출하여 데이터 추출
     for channel_id in channel_id_list:
         try:
@@ -44,11 +47,11 @@ def update_channel_stats():
 
         except:
             continue
-
+    print("유튜브api성공")
     # postgresql에 연결
     DATABASE_URL = os.environ.get('DATABASE_URL')
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-
+    print("DB연결성공")
     # 데이터를 PostgreSQL에 삽입
     cur = conn.cursor()
     for channel in channel_data:
@@ -59,13 +62,22 @@ def update_channel_stats():
     conn.commit()
     cur.close()
     conn.close()
+    print("끝")
+# def handler(event, context):
+#     update_channel_stats()
+#
+#     return {
+#         'statusCode': 200,
+#         'body': json.dumps('Hello from Vercel!')
+#     }
 
-def handler(event, context):
-    update_channel_stats()
 
-    return {
-        'statusCode': 200,
-        'body': json.dumps('Hello from Vercel!')
-    }
+class handler(BaseHTTPRequestHandler):
 
-# 수정한 버전
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        update_channel_stats()
+
+        return
