@@ -7,8 +7,15 @@ from os.path import join
 
 
 class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.update_channel_stats()
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
 
-    def update_channel_stats(self):
+        return
+
+    def update_channel_stats():
         # 채널 ID 리스트 불러오기
         with open('data/channels_renewal_202304031340.csv', 'r') as f:
             channel_id_list = f.read().splitlines()
@@ -64,11 +71,3 @@ class handler(BaseHTTPRequestHandler):
         conn.commit()
         cur.close()
         conn.close()
-
-    def do_GET(self):
-        self.update_channel_stats()
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-
-        return
