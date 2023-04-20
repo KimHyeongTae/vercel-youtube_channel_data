@@ -8,7 +8,7 @@ from os.path import join
 
 class handler(BaseHTTPRequestHandler):
 
-    def update_channel_stats():
+    def update_channel_stats(self):
         # 채널 ID 리스트 불러오기
         with open('data/channels_renewal_202304031340.csv', 'r') as f:
             channel_id_list = f.read().splitlines()
