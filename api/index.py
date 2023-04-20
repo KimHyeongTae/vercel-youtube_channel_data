@@ -8,7 +8,7 @@ from os.path import join
 
 class handler(BaseHTTPRequestHandler):
 
-    def update_channel_stats():
+    def update_channel_stats(self):
         # 채널 ID 리스트 불러오기
         with open('data/channels_renewal_202304031340.csv', 'r') as f:
             channel_id_list = f.read().splitlines()
@@ -47,9 +47,10 @@ class handler(BaseHTTPRequestHandler):
 
                 channel_data.append(channel)
 
-            except:
+            except HttpError as e:
+                print(f'An HTTP error {e.resp.status} occurred: {e.content}')
                 continue
-        # print("유튜브api성공")
+
         # postgresql에 연결
         DATABASE_URL = os.environ.get('DATABASE_URL')
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -64,11 +65,3 @@ class handler(BaseHTTPRequestHandler):
         conn.commit()
         cur.close()
         conn.close()
-
-    def do_GET(self):
-        self.update_channel_stats()
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-
-        return
